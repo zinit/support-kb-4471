@@ -44,7 +44,8 @@ Monday. Same meeting." Swapping day and month cannot move a date by one day, so 
 parser, even though their tenants write the day first. The pattern — a weekday off, a different
 day per time zone, "only June", an invite that arrived before the booking — points at time-zone
 or daylight-saving handling. The desk had already read them as a one-day move
-(`desk-notes.json`) and still filed them under `parser`.
+(`desk-notes.json`) and still files them by tenant, so the table counts them under `parser`
+too, the way the desk's own view does; they still need their own fix.
 
 ## How they were told apart
 

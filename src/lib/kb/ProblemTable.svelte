@@ -16,6 +16,8 @@
       .map(([ch, n]) => `${ch} ×${n}`)
       .join(' · ');
   const issueNo = (url: string) => '#' + url.split('/').pop();
+  const also = (g: { alsoIn: Partial<Record<Problem, number>> }) =>
+    Object.entries(g.alsoIn).map(([p, n]) => `${n} also counted under ${p}`).join(' · ');
 </script>
 
 <p class="sum">
@@ -35,7 +37,7 @@
   <tbody>
     {#each split.groups as g (g.problem)}
       <tr>
-        <td><code>{g.problem}</code></td>
+        <td><code>{g.problem}</code>{#if also(g)}<br /><span class="tags">{also(g)}</span>{/if}</td>
         <td>{g.reports.length}</td>
         <td>{g.tenants.length}</td>
         <td class="tags">{channels(g.channels)}</td>
