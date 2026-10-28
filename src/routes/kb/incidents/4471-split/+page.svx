@@ -17,11 +17,11 @@ signature: 'v1.eyJzdWIiOiIzODkiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhd
 </script>
 
 [#4471](/kb/incidents/4471) was merged as one issue with one fix queued. Read report by report, it
-holds three problems. One fix closes only the first; the other two keep coming in after it ships.
+holds three problems, and one fix closes only the first.
 
 <Callout kind="warn">
-Fixing the parser does not close #4471. The booking-v3 form hint and the one-day shift need their
-own fixes, so each now has its own ticket.
+The parser fix closed #4471, but not its other two problems. The booking-v3 form hint and the
+one-day shift need their own fixes, so each has its own ticket.
 </Callout>
 
 ## What #4471 holds
@@ -59,7 +59,14 @@ too, the way the desk's own view does; they still need their own fix.
 
 ## Next
 
-- Keep #4471 for `parser` only; move `hint` and `shift` reports to their tickets.
+Engineering closed #4471 on 5 October:
+
+- `parser` — fixed ("fix(dates): parse dd/mm for eu locales"). [#1](https://github.com/zinit/support-kb-4471/issues/1) is closed.
+- `hint` — won't fix: the booking-v3 form is retired, so no new reports of this kind can come in.
+  [#2](https://github.com/zinit/support-kb-4471/issues/2) is closed as not planned.
+- `shift` — not in the update, and neither fix touches time-zone or daylight-saving handling. It
+  is the one problem from #4471 still open: [#3](https://github.com/zinit/support-kb-4471/issues/3)
+  stays open until engineering takes it.
 - Decision 0001 and the triage page have not been reviewed since 2024. Subject matching can't
   separate these problems, so it needs a new decision record.
 
