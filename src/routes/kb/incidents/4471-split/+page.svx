@@ -1,0 +1,65 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: daniel (zinit)
+status: proposed
+reviewed: 2026-10-28
+signature: 'v1.eyJzdWIiOiIzODkiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5MzIwMjg4NCwiZXhwIjoxNzkzMjg5Mjg0fQ.0hZym8z9fC6aI63_r2wCG0tWzW67Vh3JRD2o_1kaY8k'
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const repo = 'https://github.com/zinit/support-kb-4471/issues';
+  const issues = { parser: `${repo}/1`, hint: `${repo}/2`, shift: `${repo}/3` };
+</script>
+
+[#4471](/kb/incidents/4471) was merged as one issue with one fix queued. Read report by report, it
+holds three problems. One fix closes only the first; the other two keep coming in after it ships.
+
+<Callout kind="warn">
+Fixing the parser does not close #4471. The booking-v3 form hint and the one-day shift need their
+own fixes, so each now has its own ticket.
+</Callout>
+
+## What #4471 holds
+
+<ProblemTable ticket={4471} {issues} />
+
+## The three problems
+
+**`parser` — the shared parser reads dates month first.** Every tenant on file writes the day
+first, so a date with a day of 12 or less flips: "Our 7 April reminder went out on 4 July." It
+comes in by app, email and form, from every tenant. This is the bug #4471 named.
+
+**`hint` — the booking-v3 form tells people to type month first.** Its date field prints
+`MM/DD/YYYY`, people type what it says, and the form reads the date the tenant's way, day first.
+The date flips the same way, but the parser is not involved: it only comes in by `form`, and only
+from tenants that run booking-v3. Changing the parser leaves it as it is; the hint has to change.
+
+**`shift` — the date moves by one day.** "Client in Lisbon got Tuesday. Client in Toronto got
+Monday. Same meeting." Swapping day and month cannot move a date by one day, so these are not the
+parser, even though their tenants write the day first. The pattern — a weekday off, a different
+day per time zone, "only June", an invite that arrived before the booking — points at time-zone
+or daylight-saving handling. The desk had already read them as a one-day move
+(`desk-notes.json`) and still filed them under `parser`.
+
+## How they were told apart
+
+- Counted by id, not by row: the ticket export pages overlap.
+- Not by intake's tag: it is a guess from the reporter's browser, and it is wrong for many of them.
+- Not by subject: [decision 0001](/kb/decisions/0001-dedupe-by-subject) merges on subject alone,
+  and every problem here shares the same dozen subjects. That is how three problems became one
+  ticket.
+- By what the report says and where it comes from: the tenant's locale and booking form
+  (`causes.ts`), the channel, and the body.
+
+## Next
+
+- Keep #4471 for `parser` only; move `hint` and `shift` reports to their tickets.
+- Decision 0001 and the triage page have not been reviewed since 2024. Subject matching can't
+  separate these problems, so it needs a new decision record.
+
+<RenderStamp {signature} />

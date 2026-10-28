@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../_app/immutable/entry/start.CH5w6lId.js" rel="modulepreload">
+		<link href="../../_app/immutable/entry/payload.DSmR2FwN.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/CRzLMJPS.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/B2Ul7l_u.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/BCPXOG7W.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/Dh1V97Jm.js" rel="modulepreload">
+		<link href="../../_app/immutable/entry/app.OJOM2KM1.js" rel="modulepreload">
+		<link href="../../_app/immutable/nodes/0.C9KfiiPz.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/DK3Fl9T5.js" rel="modulepreload">
+		<link href="../../_app/immutable/nodes/5.Ccw77O8b.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/DW0Xgs2I.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/BTPwLomz.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/CVBzP17p.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/BIy4WKJS.js" rel="modulepreload">
+		<!--e2jw2j--><!----><title>#4471 · three problems, not one · support kb</title>
+		<link href="../../_app/immutable/assets/runbook.COyw0cbZ.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Callout.AbLv9dM_.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/_page.BFid5JGs.css" rel="stylesheet">
+  </head>
+  <body>
+    <div><!--[--><!--[--><!--[0--><!--[--><!--[--><!--[-1--><!--[--><div class="kb svelte-e2jw2j"><header><a class="crumb svelte-e2jw2j" href="/kb">support desk · kb</a> <h1 class="svelte-e2jw2j">#4471 · three problems, not one</h1> <p class="meta svelte-e2jw2j"><span>owner <b>daniel (zinit)</b></span> <span class="status proposed svelte-e2jw2j">proposed</span> <span class="svelte-e2jw2j">reviewed 2026-10-28 · 0 days ago</span></p></header> <!--[-1--><!--]--> <main><p><a href="/kb/incidents/4471">#4471</a> was merged as one issue with one fix queued. Read report by report, it
+holds three problems. One fix closes only the first; the other two keep coming in after it ships.</p> <aside class="warn svelte-17bri61"><!---->Fixing the parser does not close #4471. The booking-v3 form hint and the one-day shift need their
+own fixes, so each now has its own ticket.<!----></aside><!----> <h2>What #4471 holds</h2> <p class="sum svelte-1op6c6"><strong>412</strong> reports in #4471 · <strong>3</strong> problems</p> <p class="note svelte-1op6c6">The export has 427 rows for #4471; 15 of them repeat an id, so they count once.
+  Intake's tag is wrong for 43 of the 412.</p> <table><thead><tr><th>problem</th><th>reports</th><th>tenants</th><th>came in by</th><th>seen</th><th>ticket</th></tr></thead><tbody><!--[--><tr><td><code>parser</code></td><td>374</td><td>11</td><td class="tags svelte-1op6c6">app ×202 · email ×147 · form ×25</td><td>2026-04-01 → 2026-10-04</td><td><!--[0--><a href="https://github.com/zinit/support-kb-4471/issues/1">#1</a><!--]--></td></tr><tr><td><code>hint</code></td><td>33</td><td>3</td><td class="tags svelte-1op6c6">form ×33</td><td>2026-04-17 → 2026-09-22</td><td><!--[0--><a href="https://github.com/zinit/support-kb-4471/issues/2">#2</a><!--]--></td></tr><tr><td><code>shift</code></td><td>5</td><td>5</td><td class="tags svelte-1op6c6">email ×3 · app ×2</td><td>2026-04-02 → 2026-10-04</td><td><!--[0--><a href="https://github.com/zinit/support-kb-4471/issues/3">#3</a><!--]--></td></tr><!--]--></tbody></table><!----> <h2>The three problems</h2> <p><strong><code>parser</code> — the shared parser reads dates month first.</strong> Every tenant on file writes the day
+first, so a date with a day of 12 or less flips: “Our 7 April reminder went out on 4 July.” It
+comes in by app, email and form, from every tenant. This is the bug #4471 named.</p> <p><strong><code>hint</code> — the booking-v3 form tells people to type month first.</strong> Its date field prints <code>MM/DD/YYYY</code>, people type what it says, and the form reads the date the tenant’s way, day first.
+The date flips the same way, but the parser is not involved: it only comes in by <code>form</code>, and only
+from tenants that run booking-v3. Changing the parser leaves it as it is; the hint has to change.</p> <p><strong><code>shift</code> — the date moves by one day.</strong> “Client in Lisbon got Tuesday. Client in Toronto got
+Monday. Same meeting.” Swapping day and month cannot move a date by one day, so these are not the
+parser, even though their tenants write the day first. The pattern — a weekday off, a different
+day per time zone, “only June”, an invite that arrived before the booking — points at time-zone
+or daylight-saving handling. The desk had already read them as a one-day move
+(<code>desk-notes.json</code>) and still filed them under <code>parser</code>.</p> <h2>How they were told apart</h2> <ul><li>Counted by id, not by row: the ticket export pages overlap.</li> <li>Not by intake’s tag: it is a guess from the reporter’s browser, and it is wrong for many of them.</li> <li>Not by subject: <a href="/kb/decisions/0001-dedupe-by-subject">decision 0001</a> merges on subject alone,
+and every problem here shares the same dozen subjects. That is how three problems became one
+ticket.</li> <li>By what the report says and where it comes from: the tenant’s locale and booking form
+(<code>causes.ts</code>), the channel, and the body.</li></ul> <h2>Next</h2> <ul><li>Keep #4471 for <code>parser</code> only; move <code>hint</code> and <code>shift</code> reports to their tickets.</li> <li>Decision 0001 and the triage page have not been reviewed since 2024. Subject matching can’t
+separate these problems, so it needs a new decision record.</li></ul> <!--[0--><p class="stamp svelte-1280m42">desk ref <b class="svelte-1280m42">DR-BN3Q-9G14</b></p><!--]--><!----><!----></main> <footer class="svelte-e2jw2j">Pages are written by people. Tables and charts are built from data at render time.</footer></div><!--]--><!--]--><!--]--><!----><!--]--><!--]--><!--]--><!----> <!--[-1--><!--]--><!--]-->
+			
+			<script>
+				{
+					__sveltekit_1o5xas1 = {
+						base: new URL("../..", location).pathname.slice(0, -1),
+						version: "1793203120930"
+					};
+
+					const element = document.currentScript.parentElement;
+
+					import("../../_app/immutable/entry/start.CH5w6lId.js").then(async (kit) => {
+						kit.init(__sveltekit_1o5xas1);
+						const app = await import("../../_app/immutable/entry/app.OJOM2KM1.js");
+						kit.start(app, element, {
+							node_ids: [0, 5],
+							data: [null,null],
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>
